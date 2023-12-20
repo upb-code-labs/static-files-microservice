@@ -1,9 +1,11 @@
 package config
 
-// Validator methods
-type Validator struct{}
+import "github.com/go-playground/validator/v10"
 
-func (v *Validator) IsArchiveTypeValid(archiveType string) bool {
+// Custom Validator methods
+type CustomValidator struct{}
+
+func (v *CustomValidator) IsArchiveTypeValid(archiveType string) bool {
 	validFileTypes := []string{"test", "submission"}
 	for _, fileType := range validFileTypes {
 		if fileType == archiveType {
@@ -14,13 +16,25 @@ func (v *Validator) IsArchiveTypeValid(archiveType string) bool {
 	return false
 }
 
-// Validator instance
-var validator *Validator
+// Custom validator instance
+var cv *CustomValidator
 
-func GetValidator() *Validator {
-	if validator == nil {
-		validator = &Validator{}
+func GetCustomValidator() *CustomValidator {
+	if cv == nil {
+		cv = &CustomValidator{}
 	}
 
-	return validator
+	return cv
+}
+
+// Go validator
+var gv *validator.Validate
+
+// Go validator instance
+func GetGoValidator() *validator.Validate {
+	if gv == nil {
+		gv = validator.New()
+	}
+
+	return gv
 }

@@ -16,7 +16,7 @@ func SaveArchiveController(c *gin.Context) {
 
 	// Check if the fields are valid
 	file_is_not_valid := err != nil || file == nil
-	if file_is_not_valid || !config.GetValidator().IsArchiveTypeValid(typeField) {
+	if file_is_not_valid || !config.GetCustomValidator().IsArchiveTypeValid(typeField) {
 		c.JSON(400, gin.H{
 			"message": "Please, make sure you are sending a valid file and a valid file type",
 		})
@@ -77,7 +77,48 @@ func DeleteArchiveController(c *gin.Context) {
 }
 
 func GetArchiveController(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello world",
-	})
+	var request DownloadArchiveRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(400, gin.H{
+			"message": "Please, make sure you are sending a valid request",
+		})
+		return
+	}
+
+	// Check if the fields are valid
+	if err := config.GetGoValidator().Struct(request); err != nil {
+		c.JSON(400, gin.H{
+			"message": "Fields validation failed",
+			"errors":  err.Error(),
+		})
+		return
+	}
+
+	// Get the destination folder according to the file type
+	destinationFolder, err := utils.GetArchivePathFromFileType(request.ArchiveType)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while identifying destination folder from file type",
+		})
+		return
+	}
+
+	// Check if the file exists
+	if !models.DoesFileExists(destinationFolder, request.ArchiveUUID) {
+		c.JSON(404, gin.H{
+			"message": "File not found",
+		})
+		return
+	}
+
+	// Get the file
+	fileBytes, err := models.GetArchive(destinationFolder, request.ArchiveUUID)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while getting the file",
+		})
+		return
+	}
+
+	c.Data(200, "application/zip", fileBytes)
 }

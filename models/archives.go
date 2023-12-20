@@ -37,3 +37,29 @@ func SaveArchive(directory string, file multipart.File) (saved_uuid string, err 
 
 	return uuid.String(), nil
 }
+
+func DoesFileExists(directory string, uuid string) bool {
+	volumePath := config.GetEnvironment().ArchivesVolumePath
+	path := fmt.Sprintf("%s/%s/%s.zip", volumePath, directory, uuid)
+
+	// Check if the file exists
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
+func GetArchive(directory string, uuid string) (fileBytes []byte, err error) {
+	// Get the file path
+	volumePath := config.GetEnvironment().ArchivesVolumePath
+	path := fmt.Sprintf("%s/%s/%s.zip", volumePath, directory, uuid)
+
+	// Read the file
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, errors.New("error while reading the file")
+	}
+
+	return file, nil
+}
