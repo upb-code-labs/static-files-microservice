@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/upb-code-labs/static-files-microservice/config"
 	"github.com/upb-code-labs/static-files-microservice/models"
 	"github.com/upb-code-labs/static-files-microservice/utils"
@@ -50,8 +51,11 @@ func SaveArchiveController(c *gin.Context) {
 		return
 	}
 
+	// Generate a uuid
+	uuid, err := uuid.NewRandom()
+
 	// Save the file
-	uuid, err := models.SaveArchive(destinationFolder, file_bytes)
+	err = models.SaveArchive(destinationFolder, uuid.String(), file_bytes)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": "Error while saving the file",
@@ -65,9 +69,68 @@ func SaveArchiveController(c *gin.Context) {
 }
 
 func OverwriteArchiveController(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello world",
-	})
+	// Get the data from the multipart/form-data request
+	file, err := c.FormFile("file")
+	typeField := c.PostForm("file_type")
+	fileUUID := c.PostForm("file_uuid")
+
+	// Check if the fields are valid
+	file_is_not_valid := err != nil || file == nil
+	file_type_is_not_valid := !config.GetCustomValidator().IsArchiveTypeValid(typeField)
+	file_uuid_is_not_valid := config.GetGoValidator().Var(fileUUID, "required,uuid4") != nil
+
+	if file_is_not_valid || file_type_is_not_valid || file_uuid_is_not_valid {
+		c.JSON(400, gin.H{
+			"message": "Please, make sure you are sending a valid file, a valid file type and a valid file uuid",
+		})
+		return
+	}
+
+	file_content_type := file.Header.Get("Content-Type")
+	if file_content_type != "application/zip" {
+		c.JSON(400, gin.H{
+			"message": fmt.Sprintf("The file content type must be application/zip, but it is %s", file_content_type),
+		})
+		return
+	}
+
+	// Get the destination folder according to the file type
+	destinationFolder, err := utils.GetArchivePathFromFileType(typeField)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while identifying destination folder from file type",
+		})
+		return
+	}
+
+	// Check if the file exists
+	if !models.DoesFileExists(destinationFolder, fileUUID) {
+		c.JSON(404, gin.H{
+			"message": "File not found",
+		})
+		return
+	}
+
+	// Get the bytes from the file
+	file_bytes, err := file.Open()
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while reading the file",
+		})
+		return
+	}
+	defer file_bytes.Close()
+
+	// Overwrite the file
+	err = models.OverwriteArchive(destinationFolder, fileUUID, file_bytes)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while overwriting the file",
+		})
+		return
+	}
+
+	c.Status(200)
 }
 
 func DeleteArchiveController(c *gin.Context) {

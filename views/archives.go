@@ -9,7 +9,7 @@ func StartArchivesRoutes(e *gin.Engine) {
 	g := e.Group("/archives")
 
 	g.POST("/save", controllers.SaveArchiveController)
+	g.PUT("/overwrite", controllers.OverwriteArchiveController)
 	g.POST("/download", controllers.GetArchiveController)
-	g.PUT("/:id", controllers.OverwriteArchiveController)
-	g.DELETE("/:id", controllers.DeleteArchiveController)
+	g.POST("/delete", controllers.DeleteArchiveController)
 }
