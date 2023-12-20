@@ -1,0 +1,85 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2023-12-20T14:51:17.567Z",
+  "__export_source": "insomnia.desktop.app:v8.5.0",
+  "resources": [
+    {
+      "_id": "req_acfe5e338dcf48c3a72142025288bd08",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703083859499,
+      "created": 1703083344528,
+      "url": "{{ _.BASE_URL }}/archives",
+      "name": "save-archive",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_5670303c3cbb4c0da72dfd659345fad5",
+            "name": "file",
+            "value": "",
+            "description": "",
+            "type": "file",
+            "multiline": false,
+            "fileName": "/home/pacq/Downloads/archive.zip"
+          },
+          {
+            "id": "pair_d2e64ca3e2694491b66a36e89dd1fb43",
+            "name": "file_type",
+            "value": "test",
+            "description": ""
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "multipart/form-data" },
+        { "name": "User-Agent", "value": "insomnia/8.5.0" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1703083344528,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "parentId": null,
+      "modified": 1703083337322,
+      "created": 1703083337322,
+      "name": "UPB Code Labs Static",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_7d02ac5f73b859e7046510777d104439e3b37f17",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703083368382,
+      "created": 1703083337324,
+      "name": "Base Environment",
+      "data": { "BASE_URL": "http://127.0.0.1:8080" },
+      "dataPropertyOrder": { "&": ["BASE_URL"] },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1703083337324,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_7d02ac5f73b859e7046510777d104439e3b37f17",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703083337325,
+      "created": 1703083337325,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    }
+  ]
+}
