@@ -1,15 +1,134 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-12-20T14:51:17.567Z",
+  "__export_date": "2023-12-20T15:31:33.121Z",
   "__export_source": "insomnia.desktop.app:v8.5.0",
   "resources": [
     {
+      "_id": "req_b2a93bccdba144148ceddc53f7451360",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703086256480,
+      "created": 1703086082507,
+      "url": "{{ _.BASE_URL }}/archives/delete",
+      "name": "delete-archive",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"archive_uuid\": \"bf25cac7-8650-40b8-8a1e-bbf9660e676b\",\n\t\"archive_type\": \"submission\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "User-Agent", "value": "insomnia/8.5.0" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1703086082507,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "parentId": null,
+      "modified": 1703083337322,
+      "created": 1703083337322,
+      "name": "UPB Code Labs Static",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_8d81e3bb85954b4ba074b3d5caf674eb",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703086154001,
+      "created": 1703085904641,
+      "url": "{{ _.BASE_URL }}/archives/overwrite",
+      "name": "overwrite-archive",
+      "description": "",
+      "method": "PUT",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_b693c57b57194004b04492220f2923e5",
+            "name": "file",
+            "value": "",
+            "description": "",
+            "type": "file",
+            "multiline": false,
+            "fileName": "/home/pacq/Downloads/project.zip"
+          },
+          {
+            "id": "pair_c1085446ee3f428eac210617cc795c08",
+            "name": "archive_type",
+            "value": "submission",
+            "description": ""
+          },
+          {
+            "id": "pair_9b71574e27ba45b89629d9d57c42738e",
+            "name": "archive_uuid",
+            "value": "58bd6c54-68f1-49fc-82a7-68fea0760c99",
+            "description": ""
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "multipart/form-data" },
+        { "name": "User-Agent", "value": "insomnia/8.5.0" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1703085904641,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c229ff28cb7e4b8bbbe3b4a5fec4b7f8",
+      "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
+      "modified": 1703085192535,
+      "created": 1703084998737,
+      "url": "{{ _.BASE_URL }}/archives/download",
+      "name": "download-archive",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"archive_uuid\": \"58bd6c54-68f1-49fc-82a7-68fea0760c99\",\n\t\"archive_type\": \"submission\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "User-Agent", "value": "insomnia/8.5.0" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1703084998737,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_acfe5e338dcf48c3a72142025288bd08",
       "parentId": "wrk_c6a65b07c742414e85110c5b1253d908",
-      "modified": 1703083859499,
+      "modified": 1703086159558,
       "created": 1703083344528,
-      "url": "{{ _.BASE_URL }}/archives",
+      "url": "{{ _.BASE_URL }}/archives/save",
       "name": "save-archive",
       "description": "",
       "method": "POST",
@@ -27,8 +146,8 @@
           },
           {
             "id": "pair_d2e64ca3e2694491b66a36e89dd1fb43",
-            "name": "file_type",
-            "value": "test",
+            "name": "archive_type",
+            "value": "submission",
             "description": ""
           }
         ]
@@ -48,16 +167,6 @@
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
       "_type": "request"
-    },
-    {
-      "_id": "wrk_c6a65b07c742414e85110c5b1253d908",
-      "parentId": null,
-      "modified": 1703083337322,
-      "created": 1703083337322,
-      "name": "UPB Code Labs Static",
-      "description": "",
-      "scope": "collection",
-      "_type": "workspace"
     },
     {
       "_id": "env_7d02ac5f73b859e7046510777d104439e3b37f17",
