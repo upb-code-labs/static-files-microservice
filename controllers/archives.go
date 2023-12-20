@@ -13,7 +13,7 @@ import (
 func SaveArchiveController(c *gin.Context) {
 	// Get the data from the multipart/form-data request
 	file, err := c.FormFile("file")
-	typeField := c.PostForm("file_type")
+	typeField := c.PostForm("archive_type")
 
 	// Check if the fields are valid
 	file_is_not_valid := err != nil || file == nil
@@ -53,6 +53,12 @@ func SaveArchiveController(c *gin.Context) {
 
 	// Generate a uuid
 	uuid, err := uuid.NewRandom()
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while generating a uuid",
+		})
+		return
+	}
 
 	// Save the file
 	err = models.SaveArchive(destinationFolder, uuid.String(), file_bytes)
@@ -71,8 +77,8 @@ func SaveArchiveController(c *gin.Context) {
 func OverwriteArchiveController(c *gin.Context) {
 	// Get the data from the multipart/form-data request
 	file, err := c.FormFile("file")
-	typeField := c.PostForm("file_type")
-	fileUUID := c.PostForm("file_uuid")
+	typeField := c.PostForm("archive_type")
+	fileUUID := c.PostForm("archive_uuid")
 
 	// Check if the fields are valid
 	file_is_not_valid := err != nil || file == nil
@@ -134,9 +140,50 @@ func OverwriteArchiveController(c *gin.Context) {
 }
 
 func DeleteArchiveController(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello world",
-	})
+	var request DeleteArchiveRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(400, gin.H{
+			"message": "Please, make sure you are sending a valid request",
+		})
+		return
+	}
+
+	// Check if the fields are valid
+	if err := config.GetGoValidator().Struct(request); err != nil {
+		c.JSON(400, gin.H{
+			"message": "Fields validation failed",
+			"errors":  err.Error(),
+		})
+		return
+	}
+
+	// Get the destination folder according to the file type
+	destinationFolder, err := utils.GetArchivePathFromFileType(request.ArchiveType)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while identifying destination folder from file type",
+		})
+		return
+	}
+
+	// Check if the file exists
+	if !models.DoesFileExists(destinationFolder, request.ArchiveUUID) {
+		c.JSON(404, gin.H{
+			"message": "File not found",
+		})
+		return
+	}
+
+	// Delete the file
+	err = models.DeleteArchive(destinationFolder, request.ArchiveUUID)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error while deleting the file",
+		})
+		return
+	}
+
+	c.Status(200)
 }
 
 func GetArchiveController(c *gin.Context) {
