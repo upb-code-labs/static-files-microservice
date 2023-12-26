@@ -5,7 +5,7 @@ info:
   license:
     name: AGPL-3.0
     url: https://github.com/upb-code-labs/static-files-microservice/blob/main/LICENSE
-  version: 0.0.4
+  version: 0.4.0
 
 tags:
   - name: Archives
