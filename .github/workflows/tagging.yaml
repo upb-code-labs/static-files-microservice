@@ -1,0 +1,25 @@
+name: Tagging
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  tagging:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: TriPSs/conventional-changelog-action@v3
+        name: Changelog
+        id: changelog
+        with:
+          git-user-nane: "Pedro Andrés Chaparro Quintero"
+          git-user-email: "62714297+PedroChaparro@users.noreply.github.com"
+          git-message: "chore(release): {version}"
+          version-file: "version.json"
