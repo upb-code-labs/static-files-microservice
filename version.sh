@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION=$(
-  jq -r '.version' package.json
+  jq -r '.version' version.json
 )
 
 echo "version=$VERSION"
