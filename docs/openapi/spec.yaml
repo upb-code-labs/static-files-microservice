@@ -1,0 +1,188 @@
+openapi: 3.0.3
+
+info:
+  title: UPB Code Labs - Static Files Microservice
+  license:
+    name: AGPL-3.0
+    url: https://github.com/upb-code-labs/static-files-microservice/blob/main/LICENSE
+  version: 0.0.4
+
+tags:
+  - name: Archives
+  
+paths:
+  
+  /archives/save:
+    post: 
+      tags:
+        - Archives
+      description: Save a `zip` archive. 
+      requestBody: 
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:    
+                file:            
+                  type: string
+                  format: binary  # A `.zip` archive
+                archive_type:      
+                  type: string
+                  enum: ["submission", "test"]
+      responses:
+        "200":
+          description: The archive was saved. 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    example: "5279018f-5b8a-4635-85e5-828ec2a8db06"
+        "400":
+          description: The request is not valid or the fields validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "500":
+          description: Server side error or unexpected error. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+                
+  /archives/download:
+    post: 
+      tags:
+        - Archives
+      description: Download a `zip` archive. 
+      requestBody: 
+        content: 
+          json: 
+            schema:            
+              type: object
+              properties:    
+                archive_uuid:            
+                  type: string
+                  example: "5279018f-5b8a-4635-85e5-828ec2a8db06"
+                archive_type:      
+                  type: string
+                  enum: ["submission", "test"]
+      responses:
+        "200":
+          description: The archive is downloaded / sent. 
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: The request is not valid or the fields validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "404":
+          description: No archive with the given UUID and type was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "500":
+          description: Server side error or unexpected error. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+
+  /archives/delete:
+    post: 
+      tags:
+        - Archives
+      description: Delete a `zip` archive. 
+      requestBody: 
+        content: 
+          json: 
+            schema:            
+              type: object
+              properties:    
+                archive_uuid:            
+                  type: string
+                  example: "5279018f-5b8a-4635-85e5-828ec2a8db06"
+                archive_type:      
+                  type: string
+                  enum: ["submission", "test"]
+      responses:
+        "200":
+          description: The archive was removed.
+        "400":
+          description: The request is not valid or the fields validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "404":
+          description: No archive with the given UUID and type was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "500":
+          description: Server side error or unexpected error. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+
+  /archives/overwrite:
+    put: 
+      tags:
+        - Archives
+      description: Overwrite a `zip` archive. 
+      requestBody: 
+        content: 
+          multipart/form-data: 
+            schema:            
+              type: object
+              properties:    
+                file:            
+                  type: string
+                  format: binary  # A `.zip` archive
+                archive_uuid:      
+                  type: string
+                  example: "5279018f-5b8a-4635-85e5-828ec2a8db06"
+                archive_type:      
+                  type: string
+                  enum: ["submission", "test"]
+      responses:
+        "200":
+          description: The archive was overwrited.
+        "400":
+          description: The request is not valid or the fields validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "404":
+          description: No archive with the given UUID and type was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "500":
+          description: Server side error or unexpected error. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+
+components:
+  schemas:
+    default_error_response:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Something went wrong. Try again later."
