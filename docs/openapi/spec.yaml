@@ -30,7 +30,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "201":
           description: The archive was saved. 
           content:
             application/json:
@@ -115,7 +115,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "204":
           description: The archive was removed.
         "400":
           description: The request is not valid or the fields validation failed.
@@ -157,7 +157,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "204":
           description: The archive was overwrited.
         "400":
           description: The request is not valid or the fields validation failed.
