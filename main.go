@@ -8,5 +8,6 @@ import (
 func main() {
 	e := gin.Default()
 	views.StartArchivesRoutes(e)
+	views.StartTemplatesRoutes(e)
 	e.Run(":8080")
 }
