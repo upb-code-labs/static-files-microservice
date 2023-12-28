@@ -3,7 +3,8 @@ package config
 import "github.com/kelseyhightower/envconfig"
 
 type Environment struct {
-	ArchivesVolumePath string `split_words:"true" default:"./archives"`
+	ArchivesVolumePath  string `split_words:"true" default:"./files/archives"`
+	TemplatesVolumePath string `split_words:"true" default:"./files/templates"`
 }
 
 var env *Environment
