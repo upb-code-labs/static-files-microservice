@@ -1,6 +1,9 @@
 package utils
 
-import "errors"
+import (
+	"errors"
+	"os"
+)
 
 func GetArchivePathFromFileType(fileType string) (string, error) {
 	switch fileType {
@@ -11,4 +14,21 @@ func GetArchivePathFromFileType(fileType string) (string, error) {
 	default:
 		return "", errors.New("file type is not valid")
 	}
+}
+
+func ReadFile(path string, file string) ([]byte, error) {
+	fileBytes, err := os.ReadFile(path + "/" + file)
+	if err != nil {
+		return nil, errors.New("error while reading the file")
+	}
+
+	return fileBytes, nil
+}
+
+func DoesFileExists(path string, file string) bool {
+	if _, err := os.Stat(path + "/" + file); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
 }

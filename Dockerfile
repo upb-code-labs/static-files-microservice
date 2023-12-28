@@ -28,8 +28,13 @@ COPY --from=builder /source/bin/artifact /source/bin/artifact
 RUN mkdir -p /opt/codelabs/archives
 RUN mkdir -p /opt/codelabs/archives/submissions
 RUN mkdir -p /opt/codelabs/archives/tests
+ENV ARCHIVES_VOLUME_PATH /opt/codelabs/archives
+
+# Copy the templates folder
+RUN mkdir -p /opt/codelabs/templates
+COPY files/templates /opt/codelabs/templates
+ENV TEMPLATES_PATH /opt/codelabs/templates
 
 # Run
 EXPOSE 8080
-ENV ARCHIVES_VOLUME_PATH /opt/codelabs/archives
 ENTRYPOINT ["/source/bin/artifact"]

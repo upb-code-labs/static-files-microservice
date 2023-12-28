@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/upb-code-labs/static-files-microservice/config"
@@ -18,16 +20,8 @@ func SaveArchiveController(c *gin.Context) {
 	// Check if the fields are valid
 	file_is_not_valid := err != nil || file == nil
 	if file_is_not_valid || !config.GetCustomValidator().IsArchiveTypeValid(typeField) {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Please, make sure you are sending a valid file and a valid file type",
-		})
-		return
-	}
-
-	file_content_type := file.Header.Get("Content-Type")
-	if file_content_type != "application/zip" {
-		c.JSON(400, gin.H{
-			"message": fmt.Sprintf("The file content type must be application/zip, but it is %s", file_content_type),
 		})
 		return
 	}
@@ -35,17 +29,33 @@ func SaveArchiveController(c *gin.Context) {
 	// Get the bytes from the file
 	file_bytes, err := file.Open()
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while reading the file",
 		})
 		return
 	}
 	defer file_bytes.Close()
 
+	// Check if the file is a zip file
+	mtype, err := mimetype.DetectReader(file_bytes)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error while detecting the file type",
+		})
+		return
+	}
+
+	if mtype.String() != "application/zip" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("The file content type must be application/zip, but it is %s", mtype.String()),
+		})
+		return
+	}
+
 	// Get the destination folder according to the file type
 	destinationFolder, err := utils.GetArchivePathFromFileType(typeField)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while identifying destination folder from file type",
 		})
 		return
@@ -54,7 +64,7 @@ func SaveArchiveController(c *gin.Context) {
 	// Generate a uuid
 	uuid, err := uuid.NewRandom()
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while generating a uuid",
 		})
 		return
@@ -63,13 +73,13 @@ func SaveArchiveController(c *gin.Context) {
 	// Save the file
 	err = models.SaveArchive(destinationFolder, uuid.String(), file_bytes)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while saving the file",
 		})
 		return
 	}
 
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusCreated, gin.H{
 		"uuid": uuid,
 	})
 }
@@ -86,33 +96,8 @@ func OverwriteArchiveController(c *gin.Context) {
 	file_uuid_is_not_valid := config.GetGoValidator().Var(fileUUID, "required,uuid4") != nil
 
 	if file_is_not_valid || file_type_is_not_valid || file_uuid_is_not_valid {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Please, make sure you are sending a valid file, a valid file type and a valid file uuid",
-		})
-		return
-	}
-
-	file_content_type := file.Header.Get("Content-Type")
-	if file_content_type != "application/zip" {
-		c.JSON(400, gin.H{
-			"message": fmt.Sprintf("The file content type must be application/zip, but it is %s", file_content_type),
-		})
-		return
-	}
-
-	// Get the destination folder according to the file type
-	destinationFolder, err := utils.GetArchivePathFromFileType(typeField)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Error while identifying destination folder from file type",
-		})
-		return
-	}
-
-	// Check if the file exists
-	if !models.DoesFileExists(destinationFolder, fileUUID) {
-		c.JSON(404, gin.H{
-			"message": "File not found",
 		})
 		return
 	}
@@ -120,29 +105,62 @@ func OverwriteArchiveController(c *gin.Context) {
 	// Get the bytes from the file
 	file_bytes, err := file.Open()
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while reading the file",
 		})
 		return
 	}
 	defer file_bytes.Close()
 
+	// Check if the file is a zip file
+	mtype, err := mimetype.DetectReader(file_bytes)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error while detecting the file type",
+		})
+		return
+	}
+
+	if mtype.String() != "application/zip" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("The file content type must be application/zip, but it is %s", mtype.String()),
+		})
+		return
+	}
+
+	// Get the destination folder according to the file type
+	destinationFolder, err := utils.GetArchivePathFromFileType(typeField)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error while identifying destination folder from file type",
+		})
+		return
+	}
+
+	// Check if the file exists
+	if !models.DoesFileExists(destinationFolder, fileUUID) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "File not found",
+		})
+		return
+	}
+
 	// Overwrite the file
 	err = models.OverwriteArchive(destinationFolder, fileUUID, file_bytes)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while overwriting the file",
 		})
 		return
 	}
 
-	c.Status(200)
+	c.Status(http.StatusNoContent)
 }
 
 func DeleteArchiveController(c *gin.Context) {
 	var request DeleteArchiveRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Please, make sure you are sending a valid request",
 		})
 		return
@@ -150,7 +168,7 @@ func DeleteArchiveController(c *gin.Context) {
 
 	// Check if the fields are valid
 	if err := config.GetGoValidator().Struct(request); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Fields validation failed",
 			"errors":  err.Error(),
 		})
@@ -160,7 +178,7 @@ func DeleteArchiveController(c *gin.Context) {
 	// Get the destination folder according to the file type
 	destinationFolder, err := utils.GetArchivePathFromFileType(request.ArchiveType)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while identifying destination folder from file type",
 		})
 		return
@@ -168,7 +186,7 @@ func DeleteArchiveController(c *gin.Context) {
 
 	// Check if the file exists
 	if !models.DoesFileExists(destinationFolder, request.ArchiveUUID) {
-		c.JSON(404, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"message": "File not found",
 		})
 		return
@@ -177,19 +195,19 @@ func DeleteArchiveController(c *gin.Context) {
 	// Delete the file
 	err = models.DeleteArchive(destinationFolder, request.ArchiveUUID)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while deleting the file",
 		})
 		return
 	}
 
-	c.Status(200)
+	c.Status(http.StatusNoContent)
 }
 
 func GetArchiveController(c *gin.Context) {
 	var request DownloadArchiveRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Please, make sure you are sending a valid request",
 		})
 		return
@@ -197,7 +215,7 @@ func GetArchiveController(c *gin.Context) {
 
 	// Check if the fields are valid
 	if err := config.GetGoValidator().Struct(request); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Fields validation failed",
 			"errors":  err.Error(),
 		})
@@ -207,7 +225,7 @@ func GetArchiveController(c *gin.Context) {
 	// Get the destination folder according to the file type
 	destinationFolder, err := utils.GetArchivePathFromFileType(request.ArchiveType)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while identifying destination folder from file type",
 		})
 		return
@@ -215,7 +233,7 @@ func GetArchiveController(c *gin.Context) {
 
 	// Check if the file exists
 	if !models.DoesFileExists(destinationFolder, request.ArchiveUUID) {
-		c.JSON(404, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"message": "File not found",
 		})
 		return
@@ -224,11 +242,11 @@ func GetArchiveController(c *gin.Context) {
 	// Get the file
 	fileBytes, err := models.GetArchive(destinationFolder, request.ArchiveUUID)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while getting the file",
 		})
 		return
 	}
 
-	c.Data(200, "application/zip", fileBytes)
+	c.Data(http.StatusOK, "application/zip", fileBytes)
 }
