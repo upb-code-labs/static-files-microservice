@@ -8,7 +8,7 @@ import (
 )
 
 func GetTemplate(uuid string) (fileBytes []byte, err error) {
-	templatesPath := config.GetEnvironment().TemplatesVolumePath
+	templatesPath := config.GetEnvironment().TemplatesPath
 	file := fmt.Sprintf("%s.zip", uuid)
 
 	return utils.ReadFile(templatesPath, file)

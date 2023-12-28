@@ -21,7 +21,7 @@ func DownloadTemplateController(c *gin.Context) {
 	}
 
 	// Check if the template exists
-	path := config.GetEnvironment().TemplatesVolumePath
+	path := config.GetEnvironment().TemplatesPath
 	file := languageUUID + ".zip"
 	templateExists := utils.DoesFileExists(path, file)
 	if !templateExists {
