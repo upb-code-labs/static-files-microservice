@@ -9,6 +9,7 @@ info:
 
 tags:
   - name: Archives
+  - name: Templates
   
 paths:
   
@@ -30,7 +31,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "201":
           description: The archive was saved. 
           content:
             application/json:
@@ -115,7 +116,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "204":
           description: The archive was removed.
         "400":
           description: The request is not valid or the fields validation failed.
@@ -157,7 +158,7 @@ paths:
                   type: string
                   enum: ["submission", "test"]
       responses:
-        "200":
+        "204":
           description: The archive was overwrited.
         "400":
           description: The request is not valid or the fields validation failed.
@@ -177,6 +178,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/default_error_response"
+  
+  /teamplates/{language_uuid}:
+    get: 
+      tags:
+        - Templates
+      parameters: 
+        - in: path
+          name: language_uuid
+          schema:
+            type: string
+            example: "746132f0-11d5-4a3e-a3a7-74a56e45cf1c"
+          required: true
+      description: Download the `.zip` archive with the template for the given language. 
+      responses:
+        "200":
+          description: The archive is downloaded / sent. 
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: The request is not valid or the fields validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "404":
+          description: No template for the given UUID and type was found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"
+        "500":
+          description: Server side error or unexpected error. 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/default_error_response"              
 
 components:
   schemas:

@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/upb-code-labs/static-files-microservice/config"
+	"github.com/upb-code-labs/static-files-microservice/utils"
 )
 
 func SaveArchive(directory string, uuid string, file multipart.File) (err error) {
@@ -37,28 +38,19 @@ func SaveArchive(directory string, uuid string, file multipart.File) (err error)
 
 func DoesFileExists(directory string, uuid string) bool {
 	volumePath := config.GetEnvironment().ArchivesVolumePath
-	path := fmt.Sprintf("%s/%s/%s.zip", volumePath, directory, uuid)
+	path := fmt.Sprintf("%s/%s/", volumePath, directory)
+	file := fmt.Sprintf("%s.zip", uuid)
 
-	// Check if the file exists
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false
-	}
-
-	return true
+	return utils.DoesFileExists(path, file)
 }
 
 func GetArchive(directory string, uuid string) (fileBytes []byte, err error) {
 	// Get the file path
 	volumePath := config.GetEnvironment().ArchivesVolumePath
-	path := fmt.Sprintf("%s/%s/%s.zip", volumePath, directory, uuid)
+	path := fmt.Sprintf("%s/%s/", volumePath, directory)
+	file := fmt.Sprintf("%s.zip", uuid)
 
-	// Read the file
-	file, err := os.ReadFile(path)
-	if err != nil {
-		return nil, errors.New("error while reading the file")
-	}
-
-	return file, nil
+	return utils.ReadFile(path, file)
 }
 
 func OverwriteArchive(directory string, uuid string, file multipart.File) (err error) {
