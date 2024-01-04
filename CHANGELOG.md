@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/upb-code-labs/static-files-microservice/compare/v0.6.0...v0.6.1) (2024-01-04)
+
+
+### Bug Fixes
+
+* Reset file pointer before saving it ([#16](https://github.com/upb-code-labs/static-files-microservice/issues/16)) ([087ebb1](https://github.com/upb-code-labs/static-files-microservice/commit/087ebb18ac5c197583ec4420a5edd7508da12a4a))
+
+
+
 # [0.6.0](https://github.com/upb-code-labs/static-files-microservice/compare/v0.5.0...v0.6.0) (2024-01-02)
 
 
