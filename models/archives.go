@@ -22,13 +22,19 @@ func SaveArchive(directory string, uuid string, file multipart.File) (err error)
 		return errors.New("error while creating the file")
 	}
 
-	// Get the bytes from the file
+	// Reset the file pointer
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return errors.New("error while resetting the file pointer")
+	}
+
+	// Read the file bytes
 	buffer := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buffer, file); err != nil {
 		return errors.New("error while reading the file")
 	}
 
-	// Copy the file bytes to the empty file
+	// Write the file bytes
 	if _, err := emptyFile.Write(buffer.Bytes()); err != nil {
 		return errors.New("error while writing the file")
 	}
