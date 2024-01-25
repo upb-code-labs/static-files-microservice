@@ -1,3 +1,12 @@
+## [0.6.2](https://github.com/upb-code-labs/static-files-microservice/compare/v0.6.1...v0.6.2) (2024-01-25)
+
+
+### Bug Fixes
+
+* Log errors to console ([#22](https://github.com/upb-code-labs/static-files-microservice/issues/22)) ([a0fb86e](https://github.com/upb-code-labs/static-files-microservice/commit/a0fb86ecef304678a9aea14b4cedb82a682f8596))
+
+
+
 ## [0.6.1](https://github.com/upb-code-labs/static-files-microservice/compare/v0.6.0...v0.6.1) (2024-01-04)
 
 
