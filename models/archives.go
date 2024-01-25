@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"os"
 
@@ -19,23 +20,27 @@ func SaveArchive(directory string, uuid string, file multipart.File) (err error)
 
 	emptyFile, err := os.Create(path)
 	if err != nil {
+		log.Println(err)
 		return errors.New("error while creating the file")
 	}
 
 	// Reset the file pointer
 	_, err = file.Seek(0, 0)
 	if err != nil {
+		log.Println(err)
 		return errors.New("error while resetting the file pointer")
 	}
 
 	// Read the file bytes
 	buffer := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buffer, file); err != nil {
+		log.Println(err)
 		return errors.New("error while reading the file")
 	}
 
 	// Write the file bytes
 	if _, err := emptyFile.Write(buffer.Bytes()); err != nil {
+		log.Println(err)
 		return errors.New("error while writing the file")
 	}
 
@@ -63,12 +68,14 @@ func OverwriteArchive(directory string, uuid string, file multipart.File) (err e
 	// Delete the file
 	err = DeleteArchive(directory, uuid)
 	if err != nil {
+		log.Println(err)
 		return errors.New("error while deleting the file")
 	}
 
 	// Save the file
 	err = SaveArchive(directory, uuid, file)
 	if err != nil {
+		log.Println(err)
 		return errors.New("error while saving the file")
 	}
 
@@ -83,6 +90,7 @@ func DeleteArchive(directory string, uuid string) (err error) {
 	// Delete the file
 	err = os.Remove(path)
 	if err != nil {
+		log.Println(err)
 		return errors.New("error while deleting the file")
 	}
 
