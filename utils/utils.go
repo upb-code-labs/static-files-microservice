@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"log"
 	"os"
 )
 
@@ -19,6 +20,7 @@ func GetArchivePathFromFileType(fileType string) (string, error) {
 func ReadFile(path string, file string) ([]byte, error) {
 	fileBytes, err := os.ReadFile(path + "/" + file)
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New("error while reading the file")
 	}
 
