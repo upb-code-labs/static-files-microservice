@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -29,6 +30,7 @@ func SaveArchiveController(c *gin.Context) {
 	// Get the bytes from the file
 	file_bytes, err := file.Open()
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while reading the file",
 		})
@@ -39,6 +41,7 @@ func SaveArchiveController(c *gin.Context) {
 	// Check if the file is a zip file
 	mtype, err := mimetype.DetectReader(file_bytes)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while detecting the file type",
 		})
@@ -64,6 +67,7 @@ func SaveArchiveController(c *gin.Context) {
 	// Generate a uuid
 	uuid, err := uuid.NewRandom()
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while generating a uuid",
 		})
@@ -105,6 +109,7 @@ func OverwriteArchiveController(c *gin.Context) {
 	// Get the bytes from the file
 	file_bytes, err := file.Open()
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while reading the file",
 		})
@@ -115,6 +120,7 @@ func OverwriteArchiveController(c *gin.Context) {
 	// Check if the file is a zip file
 	mtype, err := mimetype.DetectReader(file_bytes)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error while detecting the file type",
 		})
