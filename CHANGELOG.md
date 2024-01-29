@@ -1,3 +1,12 @@
+## [0.6.3](https://github.com/upb-code-labs/static-files-microservice/compare/v0.6.2...v0.6.3) (2024-01-29)
+
+
+### Bug Fixes
+
+* Add custom uid and gid to dockerfile ([#25](https://github.com/upb-code-labs/static-files-microservice/issues/25)) ([f96402b](https://github.com/upb-code-labs/static-files-microservice/commit/f96402b4e1cecca6c212017eeece285b9ea758a9))
+
+
+
 ## [0.6.2](https://github.com/upb-code-labs/static-files-microservice/compare/v0.6.1...v0.6.2) (2024-01-25)
 
 

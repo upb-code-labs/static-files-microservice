@@ -17,11 +17,12 @@ RUN go build -o /source/bin/artifact
 FROM docker.io/library/alpine:3.18 AS runner
 
 # Add non-root user
-RUN adduser -D -h /opt/codelabs -s /sbin/nologin codelabs
-WORKDIR /opt/codelabs
+RUN addgroup -g 1000 codelabs
+RUN adduser -D -h /opt/codelabs -s /bin/nologin -G codelabs -u 1000 codelabs
 USER codelabs
 
 # Copy binary and run
+WORKDIR /opt/codelabs
 COPY --from=builder /source/bin/artifact /source/bin/artifact
 
 # Create default folder to save archives
